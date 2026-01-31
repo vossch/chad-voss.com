@@ -13,6 +13,81 @@ var jobs = new Array();
 // offset due to header
 var offset = 200;
 
+// timeline colors cycle
+var timelineColors = ["49cb71", "a5cb14", "fed30c", "1ab4c6", "fc5d1b"];
+
+// parse date string "M/YYYY" to decimal year
+function parseStartDate(dateStr) {
+	var parts = dateStr.split("/");
+	var month = parseFloat(parts[0]);
+	var year = parseFloat(parts[1]);
+	return (month - 1) / 12 + year;
+}
+
+// get current date as decimal year
+function getCurrentDecimalYear() {
+	var now = new Date();
+	var day = now.getDate();
+	var month = now.getMonth(); // 0-indexed
+	var year = now.getFullYear();
+	return year + (day / 31 + month) / 12;
+}
+
+// calculate and apply timeline heights based on job start dates
+function calculateTimelineHeights() {
+	var jobElements = $('.job');
+	var timelineElements = $('.timeline-project');
+	var currentYear = getCurrentDecimalYear();
+
+	jobElements.each(function(i) {
+		var startDate = $(this).data('start');
+		if (!startDate) return;
+
+		var jobStart = parseStartDate(startDate);
+		var jobEnd;
+
+		if (i === 0) {
+			// First/most recent job goes to current date
+			jobEnd = currentYear;
+		} else {
+			// Other jobs go to the start of the previous job
+			var prevStart = jobElements.eq(i - 1).data('start');
+			jobEnd = parseStartDate(prevStart);
+		}
+
+		var jobLength = jobEnd - jobStart;
+		var height = Math.round(jobLength * 100 - 18); // 100px per year, minus padding/border
+
+		// Apply height and color to corresponding timeline element
+		if (timelineElements.eq(i).length) {
+			timelineElements.eq(i).css({
+				'height': height + 'px',
+				'border-right-color': '#' + timelineColors[i % timelineColors.length]
+			});
+		}
+	});
+}
+
+// generate timeline ticks based on current year
+function generateTimelineTicks() {
+	var currentYear = getCurrentDecimalYear();
+	var fullYear = new Date().getFullYear();
+	var ticksContainer = $('#timeline-ticks');
+
+	// Calculate margin-top to offset time
+	var marginTop = -100 * (fullYear + 2 - currentYear);
+	ticksContainer.css('margin-top', marginTop + 'px');
+
+	// Clear existing ticks and regenerate
+	ticksContainer.empty();
+
+	for (var i = fullYear + 2; i > fullYear - 20; i--) {
+		var displayYear = i - Math.round(i * 0.01) * 100;
+		var yearStr = displayYear < 10 ? '0' + displayYear : '' + displayYear;
+		ticksContainer.append('<div class="timeline-tick">' + yearStr + '</div>');
+	}
+}
+
 // get job info to be used for scrolling
 function updateJobs()
 {
@@ -97,37 +172,48 @@ function updateScroll()
 // gets job id based on content taret location
 function getJobId()
 {
+	// If we're above the first job, return 0
+	if (jobs.length > 0 && -contentTarget < jobs[0].y) {
+		return 0;
+	}
+
 	for(var i = 0; i < jobs.length; i++)
 	{
 		if(i == jobs.length - 1)
 		{
-			return i;	
+			return i;
 		}
 		if(-contentTarget >= jobs[i].y && -contentTarget < jobs[i + 1].y)
 		{
 			return i;
 		}
 	}
-	
+
 }
 
 //update timeline target based on content target
 function updateTimelineTarget()
 {
-	
+
 	// get the current job index
 	var j = getJobId();
-	
+
 	// get current job progress
 	var progress = (-contentTarget - jobs[j].y) / jobs[j].height;
+
+	// If we're above the first job, clamp progress to 0
+	if (-contentTarget < jobs[0].y) {
+		progress = 0;
+	}
+
 	if(j == jobs.length - 1)
 	{
 		// do something special for pogress through the last project
 		progress = ((-contentTarget) - jobs[j].y) / (jobs[j].height + offset - $(window).height());
-		
+
 	}
-	
-	
+
+
 	// find timeline Target
 	timelineTarget = -(jobs[j].timeHeight * progress + jobs[j].timeY);
 	timelineTarget = Math.max(timelineTarget, -$("#timeline-projects").height());
@@ -185,7 +271,12 @@ $(document).ready(function () {
     });
 
 	*/
-	
+
+	// calculate timeline heights from job start dates
+	calculateTimelineHeights();
+
+	// generate timeline ticks based on current year
+	generateTimelineTicks();
 
 	// update height
 	$(window).resize(updateHeight);
@@ -198,5 +289,5 @@ $(document).ready(function () {
 	// scrolling
 	$(document).scroll( updateScroll );
 	updateScroll();
-    
+
 });

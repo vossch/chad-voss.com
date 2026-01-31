@@ -114,6 +114,15 @@ body{
 	margin-left:200px;
 }
 
+#intro{
+	margin-left:200px;
+	padding-top:50px;
+	padding-bottom:100px;
+}
+#intro .font-c{
+	padding-bottom:20px;
+}
+
 
 /* Jobs + Projects */
 
