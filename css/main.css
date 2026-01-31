@@ -242,5 +242,131 @@ video{
 	background: rgba(100%,100%,100%,0.1) url(playBtn.png) no-repeat center;
 	}
 .video-play:hover{
-	
+
+}
+
+
+/* Mobile Responsive */
+@media screen and (max-width: 850px) {
+
+	/* Layout */
+	#wrapper {
+		width: 100%;
+		padding: 0 20px;
+		box-sizing: border-box;
+	}
+
+	#header {
+		margin-left: 30px;
+		padding-top: 30px;
+		height: auto;
+		padding-bottom: 30px;
+	}
+
+	#intro {
+		margin-left: 30px;
+		padding-top: 30px;
+		padding-bottom: 60px;
+	}
+
+	#jobs {
+		margin-left: 30px;
+	}
+
+	/* Stack indented items vertically */
+	.indent-0,
+	.indent-1,
+	.indent-2 {
+		width: auto;
+		float: none;
+		display: block;
+	}
+
+	/* Consistent spacing in project headers */
+	.project-header p {
+		margin-bottom: 3px;
+	}
+
+	/* Consistent spacing in header */
+	#header p {
+		margin-bottom: 5px;
+	}
+
+	/* Smaller fonts on mobile */
+	.font-c {
+		font-size: 36px;
+		line-height: 40px;
+	}
+
+	.job-title {
+		padding-bottom: 40px;
+	}
+
+	/* Responsive images and videos */
+	.image,
+	.video {
+		width: 100% !important;
+		height: auto !important;
+		margin-bottom: 30px;
+	}
+
+	.image img {
+		width: 100% !important;
+		height: auto !important;
+	}
+
+	.video video {
+		position: relative !important;
+		width: 100% !important;
+		height: auto !important;
+	}
+
+	/* Responsive iframes (YouTube embeds) */
+	iframe {
+		max-width: 100% !important;
+		height: auto !important;
+		aspect-ratio: 16 / 9;
+	}
+
+	/* Simplified timeline - colored bar with ticks */
+	#timeline {
+		width: 30px;
+		left: 0;
+	}
+
+	#timeline-bg {
+		margin-left: 20px;
+	}
+
+	#timeline-scroller {
+		width: 30px;
+	}
+
+	#timeline-projects {
+		width: 30px;
+	}
+
+	.timeline-project {
+		width: 20px;
+		padding-top: 0;
+		cursor: default;
+		pointer-events: none;
+	}
+
+	.timeline-project p {
+		display: none;
+	}
+
+	.timeline-project:hover {
+		text-decoration: none;
+	}
+
+	#timeline-ticks {
+		right: 0;
+	}
+
+	#timeline-scroller-ui {
+		width: 30px;
+	}
+
 }

@@ -91,6 +91,10 @@ function generateTimelineTicks() {
 // get job info to be used for scrolling
 function updateJobs()
 {
+	// Temporarily reset timeline scroller to top for consistent measurements
+	var currentScrollerTop = $('#timeline-scroller').css('top');
+	$('#timeline-scroller').css('top', '0px');
+
 	var i = 0;
 	$('.job').each(function(){
 		$(this).attr("id", i);
@@ -102,17 +106,21 @@ function updateJobs()
 		jobs[i] = jobby;
 		i++;
 	});
-	
+
 	i = 0;
 	$('.timeline-project').each(function(){
 		$(this).attr("id", i);
 		jobs[i].timeJob = $(this);
 		jobs[i].timeHeight = $(this).outerHeight();
 		timelineLength += $(this).outerHeight();
-		jobs[i].timeY = $(this).offset().top - offset + contentTarget;
+		// Calculate with scroller at 0, so use 0 instead of contentTarget
+		jobs[i].timeY = $(this).offset().top - offset;
 		$(this).click(jobSelect);
 		i++;
 	});
+
+	// Restore timeline scroller position
+	$('#timeline-scroller').css('top', currentScrollerTop);
 }
 
 // do job scroll animation
@@ -213,10 +221,18 @@ function updateTimelineTarget()
 
 	}
 
-
-	// find timeline Target
-	timelineTarget = -(jobs[j].timeHeight * progress + jobs[j].timeY);
-	timelineTarget = Math.max(timelineTarget, -$("#timeline-projects").height());
+	// Mobile: use proportional scroll mapping
+	if (window.innerWidth <= 850) {
+		var maxScroll = $("#content").height() - $(window).height();
+		var scrollProgress = -contentTarget / maxScroll;
+		var timelineHeight = $("#timeline-projects").height();
+		timelineTarget = -scrollProgress * timelineHeight;
+		timelineTarget = Math.max(Math.min(timelineTarget, 0), -timelineHeight);
+	} else {
+		// Desktop: use original per-job mapping
+		timelineTarget = -(jobs[j].timeHeight * progress + jobs[j].timeY);
+		timelineTarget = Math.max(timelineTarget, -$("#timeline-projects").height());
+	}
 }
 
 
@@ -245,6 +261,12 @@ function animateScrolling()
 function updateHeight()
 {
 	$("#timeline").height($(window).height());
+
+	// Recalculate job positions after resize
+	jobs = [];
+	timelineLength = 0;
+	updateJobs();
+	updateScroll();
 }
 
 
@@ -284,7 +306,7 @@ $(document).ready(function () {
 
 	// update job info for scrolling
 	contentTarget = -$(document).scrollTop();
-    updateJobs();
+	updateJobs();
 
 	// scrolling
 	$(document).scroll( updateScroll );
