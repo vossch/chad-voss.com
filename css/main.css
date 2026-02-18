@@ -108,6 +108,17 @@ body{
 	margin-left:200px;
 	padding-top:50px;
 	height:150px;
+	display:flex;
+	align-items:flex-start;
+	gap:15px;
+}
+
+#profile-photo{
+	width:55px;
+	height:55px;
+	border-radius:50%;
+	object-fit:cover;
+	flex-shrink:0;
 }
 
 #jobs{
@@ -137,7 +148,6 @@ body{
 }
 
 .project{
-	border-top: 1px solid #000;
 	padding-top:20px;
 	padding-bottom:100px;
 }
@@ -210,6 +220,10 @@ img{
 }
 .image{
 	background: url(diagonaltile.png) repeat;
+	margin-bottom:30px;
+	}
+.image-plain{
+	background: #f8f8f8;
 	margin-bottom:30px;
 	}
 .image-indent{
@@ -292,6 +306,11 @@ video{
 		margin-bottom: 5px;
 	}
 
+	#profile-photo {
+		width: 40px;
+		height: 40px;
+	}
+
 	/* Smaller fonts on mobile */
 	.font-c {
 		font-size: 36px;
@@ -304,13 +323,15 @@ video{
 
 	/* Responsive images and videos */
 	.image,
+	.image-plain,
 	.video {
 		width: 100% !important;
 		height: auto !important;
 		margin-bottom: 30px;
 	}
 
-	.image img {
+	.image img,
+	.image-plain img {
 		width: 100% !important;
 		height: auto !important;
 	}
